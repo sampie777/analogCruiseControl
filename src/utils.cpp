@@ -47,7 +47,7 @@ int readSensorDebounced(uint8_t sensorPin, uint8_t sampleCount, int minValue, un
     static unsigned long lastActionTime = 0;
 
     // Debounce button using cooldown period
-    if (!timeHasPassed(&lastActionTime, debounceCooldownPeriod, false))
+    if (millis() < lastActionTime + debounceCooldownPeriod)
         return 0;
 
     // Debounce button using minimum pressed time

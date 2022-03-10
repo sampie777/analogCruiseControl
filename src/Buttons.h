@@ -9,20 +9,20 @@
 #include "config.h"
 #include "utils.h"
 
-#define UPPER_LIMIT (3.9 + (4.9 - 3.9) / 2)
-#define MIDDLE_LIMIT (2.5 + (3.9 - 2.5) / 2)
-#define LOWER_LIMIT (2.5 / 2)
+#define UPPER_LIMIT ((int) (798 + (985 - 798) / 2))
+#define MIDDLE_LIMIT ((int) (510 + (798 - 510) / 2))
+#define LOWER_LIMIT ((int) (510 / 2))
 
 class Buttons {
 public:
     enum Button {
         NONE,
-        VOLUME_UP,
-        VOLUME_DOWN,
+        VOLUME_UP,      // 510
+        VOLUME_DOWN,    // 510
         INFO,
-        SOURCE,
-        UP,
-        DOWN,
+        SOURCE,         // 985
+        UP,             // 798
+        DOWN,           // 798
     };
 
     Buttons(uint8_t _sensorPin0, uint8_t _sensorPin1) {
@@ -37,6 +37,7 @@ private:
     uint8_t sensorPin1;
 
     Button getPressedButton0() const;
+
     Button getPressedButton1() const;
 };
 
