@@ -25,7 +25,7 @@ public:
         DOWN,
     };
 
-    Buttons(int _sensorPin0, int _sensorPin1) {
+    Buttons(uint8_t _sensorPin0, uint8_t _sensorPin1) {
         sensorPin0 = _sensorPin0;
         sensorPin1 = _sensorPin1;
     }
@@ -33,8 +33,8 @@ public:
     Button getPressedButton();
 
 private:
-    int sensorPin0;
-    int sensorPin1;
+    uint8_t sensorPin0;
+    uint8_t sensorPin1;
 
     Button getPressedButton0() const;
     Button getPressedButton1() const;

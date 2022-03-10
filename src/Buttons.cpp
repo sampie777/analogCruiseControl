@@ -14,7 +14,7 @@ Buttons::Button Buttons::getPressedButton() {
 }
 
 Buttons::Button Buttons::getPressedButton0() const {
-    int sens = averagedRead(sensorPin0, AVERAGE_READ_SAMPLES);
+    int sens = readSensorDebounced(sensorPin0, AVERAGE_READ_SAMPLES, LOWER_LIMIT, BUTTON_DEBOUNCE_COOLDOWN_PERIOD, BUTTON_MIN_PRESS_TIME);
     if (sens > UPPER_LIMIT) {
         return Button::SOURCE;
     } else if (sens > MIDDLE_LIMIT) {
@@ -26,7 +26,7 @@ Buttons::Button Buttons::getPressedButton0() const {
 }
 
 Buttons::Button Buttons::getPressedButton1() const {
-    int sens = averagedRead(sensorPin1, AVERAGE_READ_SAMPLES);
+    int sens = readSensorDebounced(sensorPin1, AVERAGE_READ_SAMPLES, LOWER_LIMIT, BUTTON_DEBOUNCE_COOLDOWN_PERIOD, BUTTON_MIN_PRESS_TIME);
     if (sens > UPPER_LIMIT) {
         return Button::INFO;
     } else if (sens > MIDDLE_LIMIT) {
