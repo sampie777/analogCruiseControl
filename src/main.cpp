@@ -2,7 +2,9 @@
 #include "config.h"
 #include "utils.h"
 #include "Buttons.h"
+#include "FastPwm.h"
 
+FastPwm fastPwm;
 Buttons buttons(ANALOG_BUTTON_INPUT0, ANALOG_BUTTON_INPUT1);
 bool isCruiseEnabled = false;
 bool needToGetSensorsValue = false;
@@ -17,8 +19,8 @@ void readSensors() {
 void writeSensors() {
     static int pwmSens0Last = 1;
     static int pwmSens1Last = 1;
-    int pwmSens0 = (int) ((sens0Value / 1024.0) * 255);
-    int pwmSens1 = (int) ((sens1Value / 1024.0) * 255);
+    int pwmSens0 = sens0Value;
+    int pwmSens1 = sens1Value;
 
     if (pwmSens0 == pwmSens0Last && pwmSens1 == pwmSens1Last) {
         return;
@@ -26,14 +28,21 @@ void writeSensors() {
     pwmSens0Last = pwmSens0;
     pwmSens1Last = pwmSens1;
 
-    analogWrite(SENS0_OUTPUT, pwmSens0);
-    analogWrite(SENS1_OUTPUT, pwmSens1);
+    fastPwm.setDutyCycleA(pwmSens0);
+    fastPwm.setDutyCycleB(pwmSens1);
 }
 
 void handleButtons() {
     Buttons::Button button = buttons.getPressedButton();
     switch (button) {
         case Buttons::NONE:
+            break;
+        case Buttons::UP:
+            isCruiseEnabled = true;
+            needToGetSensorsValue = true;
+#if DEBUG_PRINT
+            Serial.println("Enable");
+#endif
             break;
         case Buttons::VOLUME_UP:
             sens0Value += max(1, (int) ((double) sens0Value * SENSOR_STEP_MULTIPLIER));
@@ -42,10 +51,12 @@ void handleButtons() {
             sens0Value = min(1023, sens0Value);
             sens1Value = min(1023, sens1Value);
 
+#if DEBUG_PRINT
             Serial.print("INC sens0: ");
             Serial.print(sens0Value);
             Serial.print(" sens1: ");
             Serial.println(sens1Value);
+#endif
             break;
         case Buttons::VOLUME_DOWN:
             sens0Value -= max(1, (int) ((double) sens0Value * SENSOR_STEP_MULTIPLIER));
@@ -54,10 +65,12 @@ void handleButtons() {
             sens0Value = max(0, sens0Value);
             sens1Value = max(0, sens1Value);
 
+#if DEBUG_PRINT
             Serial.print("DEC sens0: ");
             Serial.print(sens0Value);
             Serial.print(" sens1: ");
             Serial.println(sens1Value);
+#endif
             break;
         case Buttons::INFO:
             Serial.println("INFO button pressed");
@@ -66,12 +79,9 @@ void handleButtons() {
             isCruiseEnabled = false;
             sens0Value = 0;
             sens1Value = 0;
+#if DEBUG_PRINT
             Serial.println("Disable");
-            break;
-        case Buttons::UP:
-            isCruiseEnabled = true;
-            needToGetSensorsValue = true;
-            Serial.println("Enable");
+#endif
             break;
         case Buttons::DOWN:
             Serial.println("DOWN button pressed");
@@ -89,10 +99,12 @@ void handleCruiseControl() {
     if (isCruiseEnabled && needToGetSensorsValue) {
         needToGetSensorsValue = false;
         readSensors();
+#if DEBUG_PRINT
         Serial.print("GET sens0: ");
         Serial.print(sens0Value);
         Serial.print(" sens1: ");
         Serial.println(sens1Value);
+#endif
     }
 
     writeSensors();
@@ -109,10 +121,16 @@ void setup() {
     pinMode(ANALOG_BUTTON_INPUT0, INPUT);
     pinMode(ANALOG_BUTTON_INPUT1, INPUT);
 
+    fastPwm.init();
+
     Serial.println("Ready.");
 }
 
 void loop() {
+#if DEMO
+    isCruiseEnabled = true;
+    needToGetSensorsValue = true;
+#endif
     handleButtons();
     handleCruiseControl();
     handleSwitch();
