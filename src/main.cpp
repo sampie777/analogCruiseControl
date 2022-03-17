@@ -90,6 +90,15 @@ void handleButtons() {
 }
 
 void handleSwitch() {
+    static bool wasCruiseEnabled = !isCruiseEnabled;
+    static unsigned long cruiseToggledTime = 0;
+    if (isCruiseEnabled != wasCruiseEnabled) {
+        wasCruiseEnabled = isCruiseEnabled;
+        cruiseToggledTime = millis();
+    }
+    if (isCruiseEnabled && millis() < cruiseToggledTime + SENSOR_OUTPUT_RISE_TIME) {
+        return;
+    }
     digitalWrite(SWITCH_OUTPUT, isCruiseEnabled);
 }
 
