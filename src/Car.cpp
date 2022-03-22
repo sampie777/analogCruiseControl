@@ -102,12 +102,10 @@ void Car::step() {
         return;
     }
 
-    if (!messageAvailable()) {
-        return;
+    while (messageAvailable()) {
+        CANMessage message = readMessage();
+        handleMessage(message);
     }
-
-    CANMessage message = readMessage();
-    handleMessage(message);
 }
 
 bool Car::messageAvailable() {
@@ -116,7 +114,7 @@ bool Car::messageAvailable() {
 }
 
 CANMessage Car::readMessage() {
-    unsigned long id;
+    unsigned long id = 0;
     uint8_t length = 0;
     uint8_t data[8];
 
