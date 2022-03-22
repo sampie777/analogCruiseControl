@@ -5,12 +5,18 @@
 #include "Buttons.h"
 
 Buttons::Button Buttons::getPressedButton() {
+    static Button previousButton = Button::NONE;
+
     Button button = getPressedButton0();
-    if (button != Button::NONE) {
-        return button;
+    if (button == Button::NONE) {
+        button = getPressedButton1();
     }
 
-    return getPressedButton1();
+    if (button == previousButton) {
+        return Button::NONE;
+    }
+    previousButton = button;
+    return button;
 }
 
 Buttons::Button Buttons::getPressedButton0() const {

@@ -167,6 +167,7 @@ void loop() {
     handleButtons();
     car.step();
 
+    handleSwitch();
     handleCruiseControl();
     handleSwitch();
 }
