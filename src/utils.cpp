@@ -15,11 +15,10 @@ int averagedRead(uint8_t pin, uint8_t sampleCount) {
 
 int readSensorDebounced(uint8_t sensorPin, uint8_t sampleCount, int minValue, unsigned long debounceCooldownPeriod, unsigned long minPressTime) {
     static unsigned long lastActionTime = 0;
-    static int previousReading = 0;
 
     // Debounce button using cooldown period
     if (millis() < lastActionTime + debounceCooldownPeriod)
-        return previousReading;
+        return -1;
 
     // Debounce button using minimum pressed time
     unsigned long pressStartTime = millis();
@@ -35,6 +34,5 @@ int readSensorDebounced(uint8_t sensorPin, uint8_t sampleCount, int minValue, un
         return 0;
 
     lastActionTime = millis();
-    previousReading = maxReading;
     return maxReading;
 }

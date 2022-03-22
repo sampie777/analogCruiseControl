@@ -134,8 +134,6 @@ void handleCruiseControl() {
         Serial.println(sens1Value);
 #endif
     }
-
-    writeSensors();
 }
 
 void setup() {
@@ -167,7 +165,7 @@ void loop() {
     handleButtons();
     car.step();
 
-    handleSwitch();
     handleCruiseControl();
     handleSwitch();
+    writeSensors();
 }
