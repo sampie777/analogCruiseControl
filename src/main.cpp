@@ -116,13 +116,17 @@ void handleSwitch() {
 }
 
 void handleCruiseControl() {
+    static bool wasCarConnected = false;
     digitalWrite(STATUS_LED, isCruiseEnabled);
 
     if (car.isConnected()) {
         if (car.isBraking() || car.getRpm() > MAX_RPM_LIMIT) {
             disableCruiseControl();
         }
+    } else if (wasCarConnected) {
+        disableCruiseControl();
     }
+    wasCarConnected = car.isConnected();
 
     if (isCruiseEnabled && needToGetSensorsValue) {
         needToGetSensorsValue = false;
