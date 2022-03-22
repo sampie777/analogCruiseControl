@@ -18,6 +18,9 @@ void disableCruiseControl() {
     isCruiseEnabled = false;
     sens0Value = 0;
     sens1Value = 0;
+#if DEBUG_MODE
+    Serial.println("Disable");
+#endif
 }
 
 void readSensors() {
@@ -88,9 +91,6 @@ void handleButtons() {
             break;
         case Buttons::SOURCE:
             disableCruiseControl();
-#if DEBUG_MODE
-            Serial.println("Disable");
-#endif
             break;
         case Buttons::DOWN:
 #if DEBUG_MODE

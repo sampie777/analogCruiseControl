@@ -5,6 +5,9 @@
 #include "Car.h"
 
 void Car::connect() {
+#if DEBUG_MODE
+    Serial.println("Initializing MCP2515...");
+#endif
     // Initialize MCP2515 running at 8MHz with a baudrate of 500kb/s and the masks and filters disabled.
     if (CAN0.begin(MCP_ANY, CAN_500KBPS, MCP_8MHZ) != CAN_OK) {
 #if DEBUG_MODE
@@ -24,6 +27,13 @@ void Car::connect() {
 #if DEBUG_MODE
     Serial.println("MCP2515 Initialized Successfully!");
 #endif
+
+    digitalWrite(STATUS_LED, LOW);
+    delay(400);
+    digitalWrite(STATUS_LED, HIGH);
+    delay(100);
+    digitalWrite(STATUS_LED, LOW);
+    delay(200);
 }
 
 void Car::reconnect() {
@@ -32,7 +42,7 @@ void Car::reconnect() {
         return;
     }
 
-    if (millis() > lastReconnectTime + CAN_RECONNECT_TIMEOUT) {
+    if (millis() < lastReconnectTime + CAN_RECONNECT_TIMEOUT) {
         return;
     }
     lastReconnectTime = millis();
@@ -41,6 +51,24 @@ void Car::reconnect() {
 }
 
 void Car::checkConnection() {
+    static unsigned long lastCheckedTime = 0;
+    if (_isConnected && millis() > lastCheckedTime + CAN_RECONNECT_TIMEOUT) {
+        lastCheckedTime = millis();
+
+        _isConnected = false;
+        for (int i = 0; i < 10; i++) {
+            if (CAN0.getMode() == (MCP_LISTENONLY >> 5)) {
+                _isConnected = true;
+                break;
+            }
+        }
+#if DEBUG_MODE
+        if (!_isConnected) {
+            Serial.println("Lost connection");
+        }
+#endif
+    }
+
     if (_isConnected) {
         _wasConnected = _isConnected;
         return;
@@ -88,13 +116,12 @@ bool Car::messageAvailable() {
 }
 
 CANMessage Car::readMessage() {
-    unsigned long rxId;
-    uint8_t len = 0;
-    uint8_t rxBuf[8];
+    unsigned long id;
+    uint8_t length = 0;
+    uint8_t data[8];
 
-    // Read data: len = data length, buf = data byte(s)
-    CAN0.readMsgBuf(&rxId, &len, rxBuf);
-    CANMessage message = CANMessage(rxId, len, rxBuf);
+    CAN0.readMsgBuf(&id, &length, data);
+    CANMessage message = CANMessage(id, length, data);
     return message;
 }
 
@@ -113,20 +140,20 @@ void Car::handleMessage(CANMessage &message) {
 }
 
 void Car::handleSpeedMessage(CANMessage &message) {
-    if (message.len != 8) {
+    if (message.length != 8) {
         return;
     }
 
-    uint16_t value = message.rxBuf[0] << 8 | message.rxBuf[1];
+    uint16_t value = message.data[0] << 8 | message.data[1];
     _speed = value / 91;
 }
 
 void Car::handleRpmMessage(CANMessage &message) {
-    if (message.len != 8) {
+    if (message.length != 8) {
         return;
     }
 
-    uint16_t value = message.rxBuf[0] << 8 | message.rxBuf[1];
+    uint16_t value = message.data[0] << 8 | message.data[1];
     _rpm = value / 8;
     if (value > 150) {
         _rpm += 150;
@@ -134,10 +161,10 @@ void Car::handleRpmMessage(CANMessage &message) {
 }
 
 void Car::handleBrakeMessage(CANMessage &message) {
-    if (message.len != 8) {
+    if (message.length != 8) {
         return;
     }
 
-    _isBraking = message.rxBuf[6] & 16;
+    _isBraking = message.data[6] & 16;
 }
 

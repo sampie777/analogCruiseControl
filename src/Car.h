@@ -38,7 +38,7 @@ private:
 
     void checkConnection();
 
-    bool messageAvailable();
+    static bool messageAvailable();
 
     CANMessage readMessage();
 
