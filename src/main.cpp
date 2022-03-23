@@ -62,6 +62,10 @@ void handleButtons() {
             Serial.println("DOWN button pressed");
 #endif
             break;
+        case Buttons::SOURCE_LONG_PRESS:
+            systemReset();
+        default:
+            break;
     }
 }
 

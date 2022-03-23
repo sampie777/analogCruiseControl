@@ -21,38 +21,70 @@ Buttons::Button Buttons::getPressedButton() {
 
 Buttons::Button Buttons::getPressedButton0() const {
     static Button previousButton = Button::NONE;
+    static unsigned long pressStartTime = 0;
+
     int sens = readSensorDebounced(sensorPin0, BUTTON_AVERAGE_READ_SAMPLES, LOWER_LIMIT, BUTTON_DEBOUNCE_COOLDOWN_PERIOD, BUTTON_MIN_PRESS_TIME);
 
+    Button button = Button::NONE;
     if (sens == -1) {
-        return previousButton;
-    }
-    if (sens > UPPER_LIMIT) {
-        previousButton = Button::SOURCE;
+        button = previousButton;
+    } else if (sens > UPPER_LIMIT) {
+        button = Button::SOURCE;
     } else if (sens > MIDDLE_LIMIT) {
-        previousButton = Button::UP;
+        button = Button::UP;
     } else if (sens > LOWER_LIMIT) {
-        previousButton = Button::VOLUME_UP;
-    } else {
-        previousButton = Button::NONE;
+        button = Button::VOLUME_UP;
     }
-    return previousButton;
+
+    if (millis() > pressStartTime + BUTTON_LONG_PRESS) {
+        if (button == Button::SOURCE) {
+            button = Button::SOURCE_LONG_PRESS;
+        } else if (button == Button::UP) {
+            button = Button::UP_LONG_PRESS;
+        } else if (button == Button::VOLUME_UP) {
+            button = Button::VOLUME_UP_LONG_PRESS;
+        }
+    }
+
+    if (button != previousButton) {
+        pressStartTime = millis();
+    }
+
+    previousButton = button;
+    return button;
 }
 
 Buttons::Button Buttons::getPressedButton1() const {
     static Button previousButton = Button::NONE;
+    static unsigned long pressStartTime = 0;
+
     int sens = readSensorDebounced(sensorPin1, BUTTON_AVERAGE_READ_SAMPLES, LOWER_LIMIT, BUTTON_DEBOUNCE_COOLDOWN_PERIOD, BUTTON_MIN_PRESS_TIME);
 
+    Button button = Button::NONE;
     if (sens == -1) {
-        return previousButton;
-    }
-    if (sens > UPPER_LIMIT) {
-        previousButton = Button::INFO;
+        button = previousButton;
+    } else if (sens > UPPER_LIMIT) {
+        button = Button::INFO;
     } else if (sens > MIDDLE_LIMIT) {
-        previousButton = Button::DOWN;
+        button = Button::DOWN;
     } else if (sens > LOWER_LIMIT) {
-        previousButton = Button::VOLUME_DOWN;
-    } else {
-        previousButton = Button::NONE;
+        button = Button::VOLUME_DOWN;
     }
-    return previousButton;
+
+    if (millis() > pressStartTime + BUTTON_LONG_PRESS) {
+        if (button == Button::INFO) {
+            button = Button::INFO_LONG_PRESS;
+        } else if (button == Button::DOWN) {
+            button = Button::DOWN_LONG_PRESS;
+        } else if (button == Button::VOLUME_DOWN) {
+            button = Button::VOLUME_DOWN_LONG_PRESS;
+        }
+    }
+
+    if (button != previousButton) {
+        pressStartTime = millis();
+    }
+
+    previousButton = button;
+    return button;
 }

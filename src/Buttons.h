@@ -23,6 +23,12 @@ public:
         SOURCE,         // 985
         UP,             // 798
         DOWN,           // 798
+        VOLUME_UP_LONG_PRESS,
+        VOLUME_DOWN_LONG_PRESS,
+        INFO_LONG_PRESS,
+        SOURCE_LONG_PRESS,
+        UP_LONG_PRESS,
+        DOWN_LONG_PRESS,
     };
 
     Buttons(uint8_t _sensorPin0, uint8_t _sensorPin1) {

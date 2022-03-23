@@ -36,3 +36,15 @@ int readSensorDebounced(uint8_t sensorPin, uint8_t sampleCount, int minValue, un
     lastActionTime = millis();
     return maxReading;
 }
+
+[[noreturn]] void systemReset() {
+    for (int i = 0; i < 8; i++) {
+        digitalWrite(STATUS_LED, LOW);
+        delay(80);
+        digitalWrite(STATUS_LED, HIGH);
+        delay(80);
+    }
+
+    // Access watchdog register, otherwise it won't work
+    delay(WDTCSR >> 7);
+}
