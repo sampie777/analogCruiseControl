@@ -16,6 +16,7 @@ public:
     bool isEnabled() const { return _isEnabled; }
     void enable();
     void disable();
+    void reEnable();
     void increase();
     void decrease();
     void step();
@@ -26,6 +27,7 @@ private:
     bool _needToGetSensorsValue = false;
     bool _isSpeedControl = false;
     int16_t _targetSpeed = 0;
+    int16_t _lastTargetSpeed = 0;
     int _pedal0 = 0;
     int _pedal1 = 0;
     int _pedal0min = 0;

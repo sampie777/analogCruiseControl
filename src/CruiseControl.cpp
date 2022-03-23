@@ -24,14 +24,19 @@ void CruiseControl::disable() {
 #if DEMO
     return;
 #endif
+    _lastTargetSpeed = _targetSpeed;
     _isEnabled = false;
-    _pedal0 = 0;
-    _pedal1 = 0;
     _targetSpeed = 0;
     _isSpeedControl = false;
 #if DEBUG_MODE
     Serial.println("Disable");
 #endif
+}
+
+void CruiseControl::reEnable() {
+    enable();
+    _targetSpeed = _lastTargetSpeed;
+    _needToGetSensorsValue = false;
 }
 
 void CruiseControl::increase() {

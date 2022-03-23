@@ -62,6 +62,9 @@ void handleButtons() {
             Serial.println("DOWN button pressed");
 #endif
             break;
+        case Buttons::UP_LONG_PRESS:
+            cruiseControl.reEnable();
+            break;
         case Buttons::SOURCE_LONG_PRESS:
             systemReset();
         default:
