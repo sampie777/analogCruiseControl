@@ -4,10 +4,12 @@
 #include "Buttons.h"
 #include "FastPwm.h"
 #include "Car.h"
+#include "StatusLED.h"
 
 FastPwm fastPwm;
 Buttons buttons(ANALOG_BUTTON_INPUT0, ANALOG_BUTTON_INPUT1);
 Car car;
+StatusLED statusLed;
 
 bool isCruiseEnabled = false;
 bool needToGetSensorsValue = false;
@@ -24,8 +26,11 @@ void disableCruiseControl() {
 }
 
 void readSensors() {
-    sens0Value = averagedRead(SENS0_INPUT, AVERAGE_READ_SAMPLES);
-    sens1Value = averagedRead(SENS1_INPUT, AVERAGE_READ_SAMPLES);
+    car.getPedal(&sens0Value, &sens1Value);
+
+    if (sens0Value < PEDAL_MIN_VALUE || sens1Value < PEDAL_MIN_VALUE) {
+        disableCruiseControl();
+    }
 }
 
 void writeSensors() {
@@ -52,6 +57,7 @@ void handleButtons() {
         case Buttons::UP:
             isCruiseEnabled = true;
             needToGetSensorsValue = true;
+            statusLed.setStatus(StatusLED::CRUISE_CONTROL_ENABLED);
 #if DEBUG_MODE
             Serial.println("Enable");
 #endif
@@ -117,7 +123,10 @@ void handleSwitch() {
 
 void handleCruiseControl() {
     static bool wasCarConnected = false;
-    digitalWrite(STATUS_LED, isCruiseEnabled);
+
+    if (!car.isPedalConnected()) {
+        disableCruiseControl();
+    }
 
     if (car.isConnected()) {
         if (car.isBraking() || car.getRpm() > MAX_RPM_LIMIT) {
@@ -138,6 +147,12 @@ void handleCruiseControl() {
         Serial.println(sens1Value);
 #endif
     }
+}
+
+void setOutputs() {
+    handleSwitch();
+    writeSensors();
+    digitalWrite(STATUS_LED, isCruiseEnabled);
 }
 
 void setup() {
@@ -166,10 +181,11 @@ void loop() {
     isCruiseEnabled = true;
     needToGetSensorsValue = true;
 #endif
+    statusLed.displayStatus();
+
     handleButtons();
     car.step();
 
     handleCruiseControl();
-    handleSwitch();
-    writeSensors();
+    setOutputs();
 }

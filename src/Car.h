@@ -9,6 +9,8 @@
 #include "../lib/MCP_CAN_lib/mcp_can.h"
 #include "config.h"
 #include "CANMessage.h"
+#include "StatusLED.h"
+#include "utils.h"
 
 class Car {
 public:
@@ -25,7 +27,12 @@ public:
     uint16_t getRpm() const { return _rpm; };
 
     bool isBraking() const { return _isBraking; };
+
     bool isConnected() const { return _isConnected; };
+
+    bool isPedalConnected();
+
+    void getPedal(int * pedal0, int * pedal1);
 
 private:
     MCP_CAN CAN0;

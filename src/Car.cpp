@@ -4,6 +4,8 @@
 
 #include "Car.h"
 
+extern StatusLED statusLed;
+
 void Car::connect() {
 #if DEBUG_MODE
     Serial.println("Initializing MCP2515...");
@@ -28,12 +30,7 @@ void Car::connect() {
     Serial.println("MCP2515 Initialized Successfully!");
 #endif
 
-    digitalWrite(STATUS_LED, LOW);
-    delay(400);
-    digitalWrite(STATUS_LED, HIGH);
-    delay(100);
-    digitalWrite(STATUS_LED, LOW);
-    delay(200);
+    statusLed.setStatus(StatusLED::CAN_CONNECTED_SUCCESSFUL);
 }
 
 void Car::reconnect() {
@@ -75,21 +72,7 @@ void Car::checkConnection() {
     }
 
     if (_wasConnected) {
-        // Warn user
-        digitalWrite(STATUS_LED, LOW);
-        delay(200);
-        digitalWrite(STATUS_LED, HIGH);
-        delay(400);
-        digitalWrite(STATUS_LED, LOW);
-        delay(400);
-        digitalWrite(STATUS_LED, HIGH);
-        delay(400);
-        digitalWrite(STATUS_LED, LOW);
-        delay(400);
-        digitalWrite(STATUS_LED, HIGH);
-        delay(400);
-        digitalWrite(STATUS_LED, LOW);
-        delay(400);
+        statusLed.setStatus(StatusLED::CAN_CONNECTED_UNSUCCESSFUL);
     }
 
     reconnect();
@@ -164,5 +147,36 @@ void Car::handleBrakeMessage(CANMessage &message) {
     }
 
     _isBraking = message.data[6] & 16;
+}
+
+void Car::getPedal(int *pedal0, int *pedal1) {
+    *pedal0 = averagedRead(SENS0_INPUT, PEDAL_AVERAGE_READ_SAMPLES);
+    *pedal1 = averagedRead(SENS1_INPUT, PEDAL_AVERAGE_READ_SAMPLES);
+
+    if (*pedal0 >= PEDAL_MIN_VALUE && *pedal1 >= PEDAL_MIN_VALUE) {
+        statusLed.clearStatus(StatusLED::LOST_SENSOR_CONNECTION);
+        return;
+    }
+
+#if DEBUG_MODE
+    Serial.println("Pedal disconnected");
+#endif
+    statusLed.setStatus(StatusLED::LOST_SENSOR_CONNECTION);
+}
+
+bool Car::isPedalConnected() {
+    static unsigned long lastCheckTime = 0;
+    static bool lastValue = false;
+
+    if (millis() < lastCheckTime + PEDAL_CHECK_INTERVAL) {
+        return lastValue;
+    }
+    lastCheckTime = millis();
+
+    int pedal0, pedal1;
+    getPedal(&pedal0, &pedal1);
+    lastValue = pedal0 >= PEDAL_MIN_VALUE && pedal1 >= PEDAL_MIN_VALUE;
+
+    return lastValue;
 }
 

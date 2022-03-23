@@ -21,7 +21,7 @@ Buttons::Button Buttons::getPressedButton() {
 
 Buttons::Button Buttons::getPressedButton0() const {
     static Button previousButton = Button::NONE;
-    int sens = readSensorDebounced(sensorPin0, AVERAGE_READ_SAMPLES, LOWER_LIMIT, BUTTON_DEBOUNCE_COOLDOWN_PERIOD, BUTTON_MIN_PRESS_TIME);
+    int sens = readSensorDebounced(sensorPin0, BUTTON_AVERAGE_READ_SAMPLES, LOWER_LIMIT, BUTTON_DEBOUNCE_COOLDOWN_PERIOD, BUTTON_MIN_PRESS_TIME);
 
     if (sens == -1) {
         return previousButton;
@@ -40,7 +40,7 @@ Buttons::Button Buttons::getPressedButton0() const {
 
 Buttons::Button Buttons::getPressedButton1() const {
     static Button previousButton = Button::NONE;
-    int sens = readSensorDebounced(sensorPin1, AVERAGE_READ_SAMPLES, LOWER_LIMIT, BUTTON_DEBOUNCE_COOLDOWN_PERIOD, BUTTON_MIN_PRESS_TIME);
+    int sens = readSensorDebounced(sensorPin1, BUTTON_AVERAGE_READ_SAMPLES, LOWER_LIMIT, BUTTON_DEBOUNCE_COOLDOWN_PERIOD, BUTTON_MIN_PRESS_TIME);
 
     if (sens == -1) {
         return previousButton;
