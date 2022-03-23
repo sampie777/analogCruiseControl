@@ -33,10 +33,6 @@ private:
     double _controlValueStart = 0.0;
     double _controlValue = 0.0;
 
-    double Kp = 0.02;
-    double Ki = 0.000002;
-    double Kd = 0.0;
-
     void readPedal();
     void applyPID();
     void setPedals(double value);   // Any value between 0.0 and 1.0

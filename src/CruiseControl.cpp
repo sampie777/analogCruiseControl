@@ -155,7 +155,7 @@ void CruiseControl::applyPID() {
     double error = _targetSpeed - car.getSpeed();
     double integral = previousIntegral + error * (double) iterationTime;
     double derivative = (error - previousError) / (double) iterationTime;
-    double output = _controlValueStart + Kp * error + Ki * integral + Kd * derivative;
+    double output = _controlValueStart + PID_Kp * error + PID_Ki * integral + PID_Kd * derivative;
 
     // Anti reset wind-up
     if (output >= 1.0) {
