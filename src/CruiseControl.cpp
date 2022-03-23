@@ -23,6 +23,7 @@ void CruiseControl::disable() {
     _isEnabled = false;
     _pedal0 = 0;
     _pedal1 = 0;
+    _targetSpeed = 0;
     _isSpeedControl = false;
 #if DEBUG_MODE
     Serial.println("Disable");

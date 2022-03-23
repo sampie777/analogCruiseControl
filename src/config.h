@@ -36,7 +36,7 @@
 #define MAX_RPM_LIMIT 4500
 #define PID_ITERATION_TIME 100
 
-#define PID_Kp 0.02
+#define PID_Kp 0.06
 #define PID_Ki 0.000002
 #define PID_Kd 0.0
 
