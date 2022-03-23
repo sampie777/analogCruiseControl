@@ -4,8 +4,6 @@
 
 #include "Car.h"
 
-extern StatusLED statusLed;
-
 void Car::connect() {
 #if DEBUG_MODE
     Serial.println("Initializing MCP2515...");

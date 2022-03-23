@@ -1,43 +1,22 @@
 #include <Arduino.h>
 #include "config.h"
-#include "utils.h"
-#include "Buttons.h"
-#include "FastPwm.h"
-#include "Car.h"
 #include "StatusLED.h"
+#include "FastPwm.h"
+#include "Buttons.h"
+#include "Car.h"
+#include "CruiseControl.h"
 
+StatusLED statusLed;
 FastPwm fastPwm;
 Buttons buttons(ANALOG_BUTTON_INPUT0, ANALOG_BUTTON_INPUT1);
 Car car;
-StatusLED statusLed;
-
-bool isCruiseEnabled = false;
-bool needToGetSensorsValue = false;
-int sens0Value = 0;
-int sens1Value = 0;
-
-void disableCruiseControl() {
-    isCruiseEnabled = false;
-    sens0Value = 0;
-    sens1Value = 0;
-#if DEBUG_MODE
-    Serial.println("Disable");
-#endif
-}
-
-void readSensors() {
-    car.getPedal(&sens0Value, &sens1Value);
-
-    if (sens0Value < PEDAL_MIN_VALUE || sens1Value < PEDAL_MIN_VALUE) {
-        disableCruiseControl();
-    }
-}
+CruiseControl cruiseControl;
 
 void writeSensors() {
     static int pwmSens0Last = 1;
     static int pwmSens1Last = 1;
-    int pwmSens0 = sens0Value;
-    int pwmSens1 = sens1Value;
+    int pwmSens0 = cruiseControl.getPedal0();
+    int pwmSens1 = cruiseControl.getPedal1();
 
     if (pwmSens0 == pwmSens0Last && pwmSens1 == pwmSens1Last) {
         return;
@@ -62,40 +41,13 @@ void handleButtons() {
         case Buttons::NONE:
             break;
         case Buttons::UP:
-            isCruiseEnabled = true;
-            needToGetSensorsValue = true;
-            statusLed.setStatus(StatusLED::CRUISE_CONTROL_ENABLED);
-#if DEBUG_MODE
-            Serial.println("Enable");
-#endif
+            cruiseControl.enable();
             break;
         case Buttons::VOLUME_UP:
-            sens0Value += max(1, (int) ((double) sens0Value * SENSOR_STEP_MULTIPLIER));
-            sens1Value += max(1, (int) ((double) sens1Value * SENSOR_STEP_MULTIPLIER));
-
-            sens0Value = min(1023, sens0Value);
-            sens1Value = min(1023, sens1Value);
-
-#if DEBUG_MODE
-            Serial.print("INC sens0: ");
-            Serial.print(sens0Value);
-            Serial.print(" sens1: ");
-            Serial.println(sens1Value);
-#endif
+            cruiseControl.increase();
             break;
         case Buttons::VOLUME_DOWN:
-            sens0Value -= max(1, (int) ((double) sens0Value * SENSOR_STEP_MULTIPLIER));
-            sens1Value -= max(1, (int) ((double) sens1Value * SENSOR_STEP_MULTIPLIER));
-
-            sens0Value = max(0, sens0Value);
-            sens1Value = max(0, sens1Value);
-
-#if DEBUG_MODE
-            Serial.print("DEC sens0: ");
-            Serial.print(sens0Value);
-            Serial.print(" sens1: ");
-            Serial.println(sens1Value);
-#endif
+            cruiseControl.decrease();
             break;
         case Buttons::INFO:
 #if DEBUG_MODE
@@ -103,7 +55,7 @@ void handleButtons() {
 #endif
             break;
         case Buttons::SOURCE:
-            disableCruiseControl();
+            cruiseControl.disable();
             break;
         case Buttons::DOWN:
 #if DEBUG_MODE
@@ -114,52 +66,24 @@ void handleButtons() {
 }
 
 void handleSwitch() {
-    static bool wasCruiseEnabled = !isCruiseEnabled;
+    static bool wasCruiseEnabled = !cruiseControl.isEnabled();
     static unsigned long cruiseToggledTime = 0;
 
-    if (isCruiseEnabled != wasCruiseEnabled) {
-        wasCruiseEnabled = isCruiseEnabled;
+    if (cruiseControl.isEnabled() != wasCruiseEnabled) {
+        wasCruiseEnabled = cruiseControl.isEnabled();
         cruiseToggledTime = millis();
     }
 
-    if (isCruiseEnabled && millis() < cruiseToggledTime + SENSOR_OUTPUT_DELAY) {
+    if (cruiseControl.isEnabled() && millis() < cruiseToggledTime + SENSOR_OUTPUT_DELAY) {
         return;
     }
-    digitalWrite(SWITCH_OUTPUT, isCruiseEnabled);
-}
-
-void handleCruiseControl() {
-    static bool wasCarConnected = false;
-
-    if (!car.isPedalConnected()) {
-        disableCruiseControl();
-    }
-
-    if (car.isConnected()) {
-        if (car.isBraking() || car.getRpm() > MAX_RPM_LIMIT) {
-            disableCruiseControl();
-        }
-    } else if (wasCarConnected) {
-        disableCruiseControl();
-    }
-    wasCarConnected = car.isConnected();
-
-    if (isCruiseEnabled && needToGetSensorsValue) {
-        needToGetSensorsValue = false;
-        readSensors();
-#if DEBUG_MODE
-        Serial.print("GET sens0: ");
-        Serial.print(sens0Value);
-        Serial.print(" sens1: ");
-        Serial.println(sens1Value);
-#endif
-    }
+    digitalWrite(SWITCH_OUTPUT, cruiseControl.isEnabled());
 }
 
 void setOutputs() {
     handleSwitch();
     writeSensors();
-    digitalWrite(STATUS_LED, isCruiseEnabled);
+    digitalWrite(STATUS_LED, cruiseControl.isEnabled());
 }
 
 void setup() {
@@ -185,14 +109,13 @@ void setup() {
 
 void loop() {
 #if DEMO
-    isCruiseEnabled = true;
-    needToGetSensorsValue = true;
+    cruiseControl.enable() = true;
 #endif
     statusLed.displayStatus();
 
     handleButtons();
     car.step();
 
-    handleCruiseControl();
+    cruiseControl.step();
     setOutputs();
 }
