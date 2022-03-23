@@ -24,14 +24,16 @@
 
 #define PEDAL_AVERAGE_READ_SAMPLES 15
 #define PEDAL_CHECK_INTERVAL 750
-#define PEDAL_MIN_VALUE 10
+#define PEDAL_MIN_VALUE 38  // = 0.38 / 5 * 1023 / 2
+#define PEDAL_MAX_VALUE 865 // = 4.23 / 5 * 1023
 
 #define BUTTON_AVERAGE_READ_SAMPLES 1
 #define BUTTON_MIN_PRESS_TIME 100   // Minimum time the button must be pressed for it to register a valid press (ms)
 #define BUTTON_DEBOUNCE_COOLDOWN_PERIOD 200 // Don't check the button after is has been pressed for this amount of time (ms)
 #define BUTTON_READS_ONCE_EVERY_LOOPS 3     // Only read the buttons once very X loops, to decrease the total time this takes
 
-#define MAX_RPM_LIMIT 4500
 #define CAN_RECONNECT_TIMEOUT 2000
+#define MAX_RPM_LIMIT 4500
+#define PID_ITERATION_TIME 100
 
 #endif //ANALOGCRUISECONTROL_CONFIG_H

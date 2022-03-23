@@ -22,7 +22,7 @@ public:
 
     void step();
 
-    uint16_t getSpeed() const { return _speed; };
+    int16_t getSpeed() const { return _speed; };
 
     uint16_t getRpm() const { return _rpm; };
 
@@ -39,7 +39,7 @@ private:
     bool _isConnected = false;
     bool _wasConnected = !_isConnected;   // different so it will trigger events on boot
 
-    uint16_t _speed = 0;
+    int16_t _speed = 0;
     uint16_t _rpm = 0;
     bool _isBraking = false;
 

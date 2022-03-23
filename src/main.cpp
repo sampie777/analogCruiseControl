@@ -101,6 +101,7 @@ void setup() {
 
     fastPwm.init();
     car.connect();
+    cruiseControl.setup();
 
 #if DEBUG_MODE
     Serial.println("Ready.");

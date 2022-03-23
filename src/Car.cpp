@@ -88,7 +88,8 @@ void Car::step() {
         return;
     }
 
-    while (messageAvailable()) {
+    // Only get max 10 messages to process
+    for (int i = 0; i < 10 && messageAvailable(); i++) {
         CANMessage message = readMessage();
         handleMessage(message);
     }
@@ -128,7 +129,7 @@ void Car::handleSpeedMessage(CANMessage &message) {
         return;
     }
 
-    uint16_t value = message.data[0] << 8 | message.data[1];
+    int16_t value = message.data[0] << 8 | message.data[1];
     _speed = value / 91;
 }
 
