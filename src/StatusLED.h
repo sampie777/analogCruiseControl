@@ -15,7 +15,9 @@ public:
         LOST_SENSOR_CONNECTION,
         CAN_CONNECTED_SUCCESSFUL,
         CAN_CONNECTED_UNSUCCESSFUL,
+        CAN_NO_MESSAGES_RECEIVED,
         CRUISE_CONTROL_ENABLED,
+        SPEED_CONTROL_ENABLED,
     };
 
     void displayStatus();

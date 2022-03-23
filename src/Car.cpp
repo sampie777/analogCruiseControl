@@ -22,6 +22,7 @@ void Car::connect() {
         return;
     }
     _isConnected = true;
+    _lastMessageTime = millis();
 
     CAN0.init_Mask(0, 0xffff);
     CAN0.init_Filt(0, 385); // RPM filter
@@ -93,6 +94,11 @@ void Car::step() {
         CANMessage message = readMessage();
         handleMessage(message);
     }
+
+    if (millis() > _lastMessageTime + CAN_MAX_MESSAGE_TIMEOUT) {
+        statusLed.setStatus(StatusLED::CAN_NO_MESSAGES_RECEIVED);
+        _isConnected = false;   // Apply for reconnect
+    }
 }
 
 bool Car::messageAvailable() {
@@ -113,9 +119,11 @@ CANMessage Car::readMessage() {
 void Car::handleMessage(CANMessage &message) {
     switch (message.id) {
         case 385:
+            _lastMessageTime = millis();
             handleRpmMessage(message);
             break;
         case 852:
+            _lastMessageTime = millis();
             handleSpeedMessage(message);
             handleBrakeMessage(message);
             break;

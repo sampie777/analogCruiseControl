@@ -38,6 +38,7 @@ private:
     MCP_CAN CAN0;
     bool _isConnected = false;
     bool _wasConnected = !_isConnected;   // different so it will trigger events on boot
+    unsigned long _lastMessageTime = 0;
 
     int16_t _speed = 0;
     uint16_t _rpm = 0;

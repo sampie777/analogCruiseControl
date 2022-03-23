@@ -46,7 +46,31 @@ void StatusLED::displayStatus() {
             delay(400);
             clearStatus();
             break;
+        case CAN_NO_MESSAGES_RECEIVED:
+            digitalWrite(STATUS_LED, LOW);
+            delay(200);
+            digitalWrite(STATUS_LED, HIGH);
+            delay(400);
+            digitalWrite(STATUS_LED, LOW);
+            delay(400);
+            digitalWrite(STATUS_LED, HIGH);
+            delay(400);
+            digitalWrite(STATUS_LED, LOW);
+            delay(200);
+            clearStatus();
+            break;
+        case SPEED_CONTROL_ENABLED:
+            digitalWrite(STATUS_LED, LOW);
+            delay(70);
+            digitalWrite(STATUS_LED, HIGH);
+            delay(70);
+            clearStatus();
+            break;
         case CRUISE_CONTROL_ENABLED:
+            digitalWrite(STATUS_LED, LOW);
+            delay(70);
+            digitalWrite(STATUS_LED, HIGH);
+            delay(70);
             digitalWrite(STATUS_LED, LOW);
             delay(70);
             digitalWrite(STATUS_LED, HIGH);

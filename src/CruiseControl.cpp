@@ -10,7 +10,11 @@ void CruiseControl::enable() {
     _targetSpeed = car.getSpeed();
     _isSpeedControl = car.isConnected();
 
-    statusLed.setStatus(StatusLED::CRUISE_CONTROL_ENABLED);
+    if (_isSpeedControl) {
+        statusLed.setStatus(StatusLED::SPEED_CONTROL_ENABLED);
+    } else {
+        statusLed.setStatus(StatusLED::CRUISE_CONTROL_ENABLED);
+    }
 #if DEBUG_MODE
     Serial.println("Enable");
 #endif

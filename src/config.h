@@ -33,6 +33,7 @@
 #define BUTTON_READS_ONCE_EVERY_LOOPS 3     // Only read the buttons once very X loops, to decrease the total time this takes
 
 #define CAN_RECONNECT_TIMEOUT 2000
+#define CAN_MAX_MESSAGE_TIMEOUT 4000
 #define MAX_RPM_LIMIT 4500
 #define PID_ITERATION_TIME 100
 
