@@ -50,6 +50,13 @@ void writeSensors() {
 }
 
 void handleButtons() {
+    // Only check buttons once every 3 loop cycles
+    static uint8_t counter = 0;
+    if (++counter < BUTTON_READS_ONCE_EVERY_LOOPS) {
+        return;
+    }
+    counter = 0;
+
     Buttons::Button button = buttons.getPressedButton();
     switch (button) {
         case Buttons::NONE:
@@ -115,7 +122,7 @@ void handleSwitch() {
         cruiseToggledTime = millis();
     }
 
-    if (isCruiseEnabled && millis() < cruiseToggledTime + SENSOR_OUTPUT_RISE_TIME) {
+    if (isCruiseEnabled && millis() < cruiseToggledTime + SENSOR_OUTPUT_DELAY) {
         return;
     }
     digitalWrite(SWITCH_OUTPUT, isCruiseEnabled);
