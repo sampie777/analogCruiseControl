@@ -31,7 +31,10 @@ void CruiseControl::disable() {
     _targetSpeed = 0;
     _isSpeedControl = false;
 #if DEBUG_MODE
-    Serial.println("Disable");
+    static uint8_t counter = 0;
+    if (counter++ % 5 == 0) {
+        Serial.println("Disable");
+    }
 #endif
 }
 
@@ -204,10 +207,13 @@ void CruiseControl::applyPID() {
     // Apply PID
     setPedals(output);
 
-#if DEMO
-    Serial.print(output);
-    Serial.print("\t");
-    Serial.println(car.getSpeed());
+#if DEBUG_MODE
+    static uint8_t counter = 0;
+    if (counter++ % 5 == 0) {
+        Serial.print(output);
+        Serial.print("\t");
+        Serial.println(car.getSpeed());
+    }
 #endif
 }
 

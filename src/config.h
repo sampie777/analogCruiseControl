@@ -20,7 +20,7 @@
 #define CAN_INT 4
 
 #define SENSOR_STEP_MULTIPLIER 0.05
-#define SENSOR_OUTPUT_DELAY 500     // Wait this duration (ms) before toggling the relay, so the output can rise to a steady state
+#define SENSOR_OUTPUT_DELAY 250     // Wait this duration (ms) before toggling the relay, so the output can rise to a steady state
 
 #define PEDAL_AVERAGE_READ_SAMPLES 15
 #define PEDAL_CHECK_INTERVAL 750
@@ -38,8 +38,8 @@
 #define MAX_RPM_LIMIT 4500
 #define PID_ITERATION_TIME 100
 
-#define PID_Kp 0.06
-#define PID_Ki 0.000002
+#define PID_Kp 0.02
+#define PID_Ki 0.000003
 #define PID_Kd 0.0
 
 #endif //ANALOGCRUISECONTROL_CONFIG_H
