@@ -37,7 +37,10 @@ int readSensorDebounced(uint8_t sensorPin, uint8_t sampleCount, int minValue, un
     return maxReading;
 }
 
-[[noreturn]] void systemReset() {
+[[noreturn]] void reboot() {
+#if DEBUG_MODE
+    Serial.println("System reset!");
+#endif
     for (int i = 0; i < 8; i++) {
         digitalWrite(STATUS_LED, LOW);
         delay(80);
@@ -46,5 +49,5 @@ int readSensorDebounced(uint8_t sensorPin, uint8_t sampleCount, int minValue, un
     }
 
     // Access watchdog register, otherwise it won't work
-    delay(WDTCSR >> 7);
+    asm volatile ("jmp 0");
 }

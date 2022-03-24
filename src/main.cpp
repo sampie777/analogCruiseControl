@@ -63,10 +63,16 @@ void handleButtons() {
 #endif
             break;
         case Buttons::UP_LONG_PRESS:
+#if DEBUG_MODE
+            Serial.println("UP_LONG_PRESS pressed");
+#endif
             cruiseControl.reEnable();
             break;
         case Buttons::SOURCE_LONG_PRESS:
-            systemReset();
+#if DEBUG_MODE
+            Serial.println("SOURCE_LONG_PRESS pressed");
+#endif
+            reboot();
         default:
             break;
     }

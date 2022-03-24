@@ -12,6 +12,6 @@ int averagedRead(uint8_t pin, uint8_t sampleCount);
 
 int readSensorDebounced(uint8_t sensorPin, uint8_t sampleCount, int minValue, unsigned long debounceCooldownPeriod, unsigned long minPressTime);
 
-[[noreturn]] void systemReset();
+[[noreturn]] void reboot();
 
 #endif //ANALOGCRUISECONTROL_UTILS_H
