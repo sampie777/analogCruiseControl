@@ -24,7 +24,7 @@ void Car::connect() {
     _isConnected = true;
     _lastMessageTime = millis();
 
-    CAN0.init_Mask(0, 0xffff);
+    CAN0.init_Mask(0, 0x07ff);
     CAN0.init_Filt(0, 385); // RPM filter
     CAN0.init_Filt(1, 852); // Speed & brake filter
 

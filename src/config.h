@@ -28,10 +28,10 @@
 #define PEDAL_MAX_VALUE 865 // = 4.23 / 5 * 1023
 
 #define BUTTON_AVERAGE_READ_SAMPLES 1
-#define BUTTON_MIN_PRESS_TIME 100   // Minimum time the button must be pressed for it to register a valid press (ms)
-#define BUTTON_DEBOUNCE_COOLDOWN_PERIOD 100 // Don't check the button after is has been pressed for this amount of time (ms)
+#define BUTTON_MIN_PRESS_TIME 80   // Minimum time the button must be pressed for it to register a valid press (ms)
+#define BUTTON_DEBOUNCE_COOLDOWN_PERIOD 80 // Don't check the button after is has been pressed for this amount of time (ms)
 #define BUTTON_READS_ONCE_EVERY_LOOPS 10     // Only read the buttons once very X loops, to decrease the total time this takes
-#define BUTTON_LONG_PRESS 3000
+#define BUTTON_LONG_PRESS 2000
 
 #define CAN_RECONNECT_TIMEOUT 2000
 #define CAN_MAX_MESSAGE_TIMEOUT 4000

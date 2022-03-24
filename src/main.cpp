@@ -41,6 +41,9 @@ void handleButtons() {
         case Buttons::NONE:
             break;
         case Buttons::UP:
+#if DEBUG_MODE
+            Serial.println("UP button pressed");
+#endif
             cruiseControl.enable();
             break;
         case Buttons::VOLUME_UP:
@@ -55,6 +58,9 @@ void handleButtons() {
 #endif
             break;
         case Buttons::SOURCE:
+#if DEBUG_MODE
+            Serial.println("SOURCE button pressed");
+#endif
             cruiseControl.disable();
             break;
         case Buttons::DOWN:

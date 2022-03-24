@@ -36,6 +36,13 @@ Buttons::Button Buttons::getPressedButton0() const {
         button = Button::VOLUME_UP;
     }
 
+    if (button != previousButton &&
+        previousButton != Button::SOURCE_LONG_PRESS &&
+        previousButton != Button::UP_LONG_PRESS &&
+        previousButton != Button::VOLUME_UP_LONG_PRESS) {
+        pressStartTime = millis();
+    }
+
     if (millis() > pressStartTime + BUTTON_LONG_PRESS) {
         if (button == Button::SOURCE) {
             button = Button::SOURCE_LONG_PRESS;
@@ -44,10 +51,6 @@ Buttons::Button Buttons::getPressedButton0() const {
         } else if (button == Button::VOLUME_UP) {
             button = Button::VOLUME_UP_LONG_PRESS;
         }
-    }
-
-    if (button != previousButton) {
-        pressStartTime = millis();
     }
 
     previousButton = button;
@@ -71,6 +74,13 @@ Buttons::Button Buttons::getPressedButton1() const {
         button = Button::VOLUME_DOWN;
     }
 
+    if (button != previousButton &&
+        previousButton != Button::INFO_LONG_PRESS &&
+        previousButton != Button::DOWN_LONG_PRESS &&
+        previousButton != Button::VOLUME_DOWN_LONG_PRESS) {
+        pressStartTime = millis();
+    }
+
     if (millis() > pressStartTime + BUTTON_LONG_PRESS) {
         if (button == Button::INFO) {
             button = Button::INFO_LONG_PRESS;
@@ -79,10 +89,6 @@ Buttons::Button Buttons::getPressedButton1() const {
         } else if (button == Button::VOLUME_DOWN) {
             button = Button::VOLUME_DOWN_LONG_PRESS;
         }
-    }
-
-    if (button != previousButton) {
-        pressStartTime = millis();
     }
 
     previousButton = button;
