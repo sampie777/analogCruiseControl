@@ -38,7 +38,6 @@ void CruiseControl::disable() {
 void CruiseControl::reEnable() {
     enable();
     _targetSpeed = _lastTargetSpeed;
-    _needToGetSensorsValue = false;
 
 #if DEBUG_MODE
     Serial.print("Re-enable: ");
