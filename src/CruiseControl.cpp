@@ -26,7 +26,9 @@ void CruiseControl::disable() {
 #if DEMO
     return;
 #endif
-    _lastTargetSpeed = _targetSpeed;
+    if (_isEnabled) {
+        _lastTargetSpeed = _targetSpeed;
+    }
     _isEnabled = false;
     _targetSpeed = 0;
     _isSpeedControl = false;
