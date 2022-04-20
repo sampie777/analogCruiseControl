@@ -9,7 +9,10 @@ void Car::connect() {
     Serial.println("Initializing MCP2515...");
 #endif
 
-    _speed = 0;
+    _currentSpeed = 0;
+    _recentSpeed = 0;
+    _speedSampleSum = 0;
+    _speedSampleAmount = 0;
     _rpm = 0;
     _isBraking = false;
     _lastMessageTime = millis();
@@ -138,7 +141,9 @@ void Car::handleSpeedMessage(CANMessage &message) {
     }
 
     int16_t value = message.data[0] << 8 | message.data[1];
-    _speed = value / 91.0;
+    _currentSpeed = value / 91.0;
+    _speedSampleSum += _currentSpeed;
+    _speedSampleAmount++;
 }
 
 void Car::handleRpmMessage(CANMessage &message) {
