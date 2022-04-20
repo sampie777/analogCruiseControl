@@ -217,6 +217,13 @@ void CruiseControl::applyPID() {
         Serial.println(car.getSpeed());
     }
 #endif
+#if DATA_LOGGER_MODE
+    Serial.print(_targetSpeed);
+    Serial.print(";");
+    Serial.print(car.getSpeed());
+    Serial.print(";");
+    Serial.print(_controlValue);
+#endif
 }
 
 void CruiseControl::setPedals(double value) {

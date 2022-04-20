@@ -7,6 +7,7 @@
 
 #define DEMO false
 #define DEBUG_MODE false
+#define DATA_LOGGER_MODE false
 
 #define SENS0_INPUT A0
 #define SENS1_INPUT A1

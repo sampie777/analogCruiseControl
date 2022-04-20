@@ -106,7 +106,7 @@ void setOutputs() {
 }
 
 void setup() {
-#if DEBUG_MODE
+#if DEBUG_MODE || DATA_LOGGER_MODE
     Serial.begin(115200);
 #endif
     pinMode(SENS0_INPUT, INPUT);
