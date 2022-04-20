@@ -6,8 +6,8 @@
 #define ANALOGCRUISECONTROL_CAR_H
 
 #include <Arduino.h>
-#include "../lib/MCP_CAN_lib/mcp_can.h"
 #include "config.h"
+#include "../lib/MCP_CAN_lib/mcp_can.h"
 #include "CANMessage.h"
 #include "StatusLED.h"
 #include "utils.h"
@@ -22,7 +22,7 @@ public:
 
     void step();
 
-    int16_t getSpeed() const { return _speed; };
+    double getSpeed() const { return _speed; };
 
     uint16_t getRpm() const { return _rpm; };
 
@@ -40,7 +40,7 @@ private:
     bool _wasConnected = !_isConnected;   // different so it will trigger events on boot
     unsigned long _lastMessageTime = 0;
 
-    int16_t _speed = 0;
+    double _speed = 0;
     uint16_t _rpm = 0;
     bool _isBraking = false;
 

@@ -138,7 +138,7 @@ void Car::handleSpeedMessage(CANMessage &message) {
     }
 
     int16_t value = message.data[0] << 8 | message.data[1];
-    _speed = value / 91;
+    _speed = value / 91.0;
 }
 
 void Car::handleRpmMessage(CANMessage &message) {
