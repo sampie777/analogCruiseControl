@@ -222,7 +222,7 @@ void CruiseControl::applyPID() {
     Serial.print(";");
     Serial.print(car.getSpeed());
     Serial.print(";");
-    Serial.print(_controlValue);
+    Serial.println(_controlValue);
 #endif
 }
 
