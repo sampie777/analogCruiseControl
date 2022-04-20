@@ -12,6 +12,7 @@ void Car::connect() {
     _speed = 0;
     _rpm = 0;
     _isBraking = false;
+    _lastMessageTime = millis();
 
     // Initialize MCP2515 running at 8MHz with a baudrate of 500kb/s and the masks and filters disabled.
     if (CAN0.begin(MCP_STD, CAN_500KBPS, MCP_8MHZ) != CAN_OK) {
@@ -22,7 +23,6 @@ void Car::connect() {
         return;
     }
     _isConnected = true;
-    _lastMessageTime = millis();
 
     CAN0.init_Mask(0, 0x07ff);
     CAN0.init_Filt(0, 385); // RPM filter
