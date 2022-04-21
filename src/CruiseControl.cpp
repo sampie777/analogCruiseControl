@@ -7,7 +7,7 @@
 void CruiseControl::enable() {
     _isEnabled = true;
     _needToGetSensorsValue = true;
-    _targetSpeed = car.getCurrentSpeed();
+    _targetSpeed = car.getSpeed();
     _isSpeedControl = car.isConnected();
 
     if (_isSpeedControl) {
@@ -189,7 +189,7 @@ void CruiseControl::applyPID() {
 #endif
 
     // Calculate PID
-    double error = _targetSpeed - car.getAverageSpeed();
+    double error = _targetSpeed - car.getSpeed();
     double integral = previousIntegral + error * (double) iterationTime;
     double derivative = (error - previousError) / (double) iterationTime;
     double output = _controlValueStart + PID_Kp * error + PID_Ki * integral + PID_Kd * derivative;
@@ -220,7 +220,7 @@ void CruiseControl::applyPID() {
 #if DATA_LOGGER_MODE
     Serial.print(_targetSpeed);
     Serial.print(",");
-    Serial.print(car.getAverageSpeed());
+    Serial.print(car.getSpeed());
     Serial.print(",");
     Serial.println(_controlValue * 100);
 #endif

@@ -22,18 +22,7 @@ public:
 
     void step();
 
-    double getCurrentSpeed() const {
-        return _currentSpeed;
-    }
-
-    double getAverageSpeed() {
-        if (_speedSampleAmount > 0) {
-            _recentSpeed = _speedSampleSum / _speedSampleAmount;
-            _speedSampleSum = 0;
-            _speedSampleAmount = 0;
-        }
-        return _recentSpeed;
-    };
+    double getSpeed() const { return _speed; };
 
     uint16_t getRpm() const { return _rpm; };
 
@@ -51,10 +40,7 @@ private:
     bool _wasConnected = !_isConnected;   // different so it will trigger events on boot
     unsigned long _lastMessageTime = 0;
 
-    double _currentSpeed = 0;
-    double _recentSpeed = 0;
-    double _speedSampleSum = 0;
-    uint8_t _speedSampleAmount = 0;
+    double _speed = 0;
     uint16_t _rpm = 0;
     bool _isBraking = false;
 
