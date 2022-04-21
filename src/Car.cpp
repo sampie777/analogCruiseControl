@@ -136,6 +136,8 @@ void Car::handleMessage(CANMessage &message) {
 }
 
 void Car::handleSpeedMessage(CANMessage &message) {
+    static unsigned long sampleStartTime = 0;
+
     if (message.length != 8) {
         return;
     }
@@ -144,6 +146,12 @@ void Car::handleSpeedMessage(CANMessage &message) {
     _currentSpeed = value / 91.0;
     _speedSampleSum += _currentSpeed;
     _speedSampleAmount++;
+
+    if (_speedSampleAmount > 250 || millis() > sampleStartTime + CAR_MAX_SPEED_SAMPLE_TIME) {
+        sampleStartTime = millis();
+        _speedSampleSum = _speedSampleSum / _speedSampleAmount;
+        _speedSampleAmount = 1;
+    }
 }
 
 void Car::handleRpmMessage(CANMessage &message) {
