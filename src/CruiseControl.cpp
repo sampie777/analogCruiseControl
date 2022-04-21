@@ -61,7 +61,7 @@ void CruiseControl::increase() {
         return;
     }
 
-    setPedals(_controlValue + SENSOR_STEP_MULTIPLIER);
+    setControlValue(_controlValue + SENSOR_STEP_MULTIPLIER);
 
 #if DEBUG_MODE
     Serial.print("INC ");
@@ -89,7 +89,7 @@ void CruiseControl::decrease() {
         return;
     }
 
-    setPedals(_controlValue - SENSOR_STEP_MULTIPLIER);
+    setControlValue(_controlValue - SENSOR_STEP_MULTIPLIER);
 
 #if DEBUG_MODE
     Serial.print("DEC ");
@@ -102,20 +102,14 @@ void CruiseControl::decrease() {
 }
 
 void CruiseControl::readPedal() {
-    car.getPedal(&_pedal0, &_pedal1);
+    _controlValue = car.readPedalPosition();
 
-    if (_pedal0min > _pedal1min) {
-        int difference = PEDAL_MAX_VALUE - _pedal0min;
-        _controlValue = (_pedal0 - _pedal0min) / (double) difference;
-    } else {
-        int difference = PEDAL_MAX_VALUE - _pedal1min;
-        _controlValue = (_pedal1 - _pedal1min) / (double) difference;
-    }
-    _controlValueStart = _controlValue;
-
-    if (_pedal0 < PEDAL_MIN_VALUE || _pedal1 < PEDAL_MIN_VALUE) {
+    if (_controlValue < 0) {
         disable();
+        _controlValue = 0;
     }
+
+    _controlValueStart = _controlValue;
 }
 
 void CruiseControl::step() {
@@ -207,7 +201,7 @@ void CruiseControl::applyPID() {
     previousIntegral = integral;
 
     // Apply PID
-    setPedals(output);
+    setControlValue(output);
 
 #if DEBUG_MODE
     static uint8_t counter = 0;
@@ -226,38 +220,11 @@ void CruiseControl::applyPID() {
 #endif
 }
 
-void CruiseControl::setPedals(double value) {
-    _controlValue = max(0.0, min(1.0, value));
-
-    if (_pedal0min > _pedal1min) {
-        int difference = PEDAL_MAX_VALUE - _pedal0min;
-        double factor = (double) _pedal1min / _pedal0min;
-        _pedal0 = (int) (_pedal0min + difference * _controlValue);
-        _pedal1 = (int) (factor * _pedal0);
-    } else {
-        int difference = PEDAL_MAX_VALUE - _pedal1min;
-        double factor = (double) _pedal0min / _pedal1min;
-        _pedal1 = (int) (_pedal1min + difference * _controlValue);
-        _pedal0 = (int) (factor * _pedal1);
-    }
-}
-
 void CruiseControl::setup() {
-    car.getPedal(&_pedal0min, &_pedal1min);
-#if DEBUG_MODE
-    Serial.print("INIT ");
-    Serial.print(_controlValue);
-    Serial.print(" sens0: ");
-    Serial.print(_pedal0min);
-    Serial.print(" sens1: ");
-    Serial.println(_pedal1min);
-#endif
 #if DEMO
-    _pedal0min = 151;
-   _pedal1min = 78;
-   _controlValueStart = 0.16;
-   _targetSpeed= 50;
-   _isEnabled = true;
-   _isSpeedControl = true;
+    _controlValueStart = 0.16;
+    _targetSpeed= 50;
+    _isEnabled = true;
+    _isSpeedControl = true;
 #endif
 }

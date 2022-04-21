@@ -4,6 +4,24 @@
 
 #include "Car.h"
 
+void Car::setup() {
+    car.readPedalSensors(&_pedal0min, &_pedal1min);
+    car.connect();
+
+#if DEBUG_MODE
+    Serial.print("INIT ");
+    Serial.print(_controlValue);
+    Serial.print(" sens0: ");
+    Serial.print(_pedal0min);
+    Serial.print(" sens1: ");
+    Serial.println(_pedal1min);
+#endif
+#if DEMO
+    _pedal0min = 151;
+    _pedal1min = 78;
+#endif
+}
+
 void Car::connect() {
 #if DEBUG_MODE
     Serial.println("Initializing MCP2515...");
@@ -161,7 +179,7 @@ void Car::handleBrakeMessage(CANMessage &message) {
     _isBraking = message.data[6] & 16;
 }
 
-void Car::getPedal(int *pedal0, int *pedal1) {
+void Car::readPedalSensors(int *pedal0, int *pedal1) {
     *pedal0 = averagedRead(SENS0_INPUT, PEDAL_AVERAGE_READ_SAMPLES);
     *pedal1 = averagedRead(SENS1_INPUT, PEDAL_AVERAGE_READ_SAMPLES);
 
@@ -186,9 +204,41 @@ bool Car::isPedalConnected() {
     lastCheckTime = millis();
 
     int pedal0, pedal1;
-    getPedal(&pedal0, &pedal1);
+    readPedalSensors(&pedal0, &pedal1);
     lastValue = pedal0 >= PEDAL_MIN_VALUE && pedal1 >= PEDAL_MIN_VALUE;
 
     return lastValue;
 }
 
+double Car::readPedalPosition() {
+    car.readPedalSensors(&_pedal0, &_pedal1);
+
+    if (_pedal0min > _pedal1min) {
+        int difference = PEDAL_MAX_VALUE - _pedal0min;
+        _pedalRelativePosition = (_pedal0 - _pedal0min) / (double) difference;
+    } else {
+        int difference = PEDAL_MAX_VALUE - _pedal1min;
+        _pedalRelativePosition = (_pedal1 - _pedal1min) / (double) difference;
+    }
+
+    if (_pedal0 < PEDAL_MIN_VALUE || _pedal1 < PEDAL_MIN_VALUE) {
+        return -1;
+    }
+    return _pedalRelativePosition;
+}
+
+void Car::setVirtualPedal(double value) {
+    _pedalRelativePosition = max(0.0, min(1.0, value));
+
+    if (_pedal0min > _pedal1min) {
+        int difference = PEDAL_MAX_VALUE - _pedal0min;
+        double factor = (double) _pedal1min / _pedal0min;
+        _pedal0 = (int) (_pedal0min + difference * _pedalRelativePosition);
+        _pedal1 = (int) (factor * _pedal0);
+    } else {
+        int difference = PEDAL_MAX_VALUE - _pedal1min;
+        double factor = (double) _pedal0min / _pedal1min;
+        _pedal1 = (int) (_pedal1min + difference * _pedalRelativePosition);
+        _pedal0 = (int) (factor * _pedal1);
+    }
+}

@@ -20,24 +20,21 @@ public:
     void increase();
     void decrease();
     void step();
-    int getPedal0() const { return _pedal0; }
-    int getPedal1() const { return _pedal1; }
 private:
     bool _isEnabled = false;
     bool _needToGetSensorsValue = false;
     bool _isSpeedControl = false;
     double _targetSpeed = 0;
     double _lastTargetSpeed = 0;
-    int _pedal0 = 0;
-    int _pedal1 = 0;
-    int _pedal0min = 0;
-    int _pedal1min = 0;
     double _controlValueStart = 0.0;
     double _controlValue = 0.0;
 
     void readPedal();
     void applyPID();
-    void setPedals(double value);   // Any value between 0.0 and 1.0
+    void setControlValue(double value) {
+        _controlValue = max(0.0, min(1.0, value));
+        car.setVirtualPedal(_controlValue);
+    }
 };
 
 extern CruiseControl cruiseControl;

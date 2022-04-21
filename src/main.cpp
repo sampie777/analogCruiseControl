@@ -15,8 +15,8 @@ CruiseControl cruiseControl;
 void writeSensors() {
     static int pwmSens0Last = 1;
     static int pwmSens1Last = 1;
-    int pwmSens0 = cruiseControl.getPedal0();
-    int pwmSens1 = cruiseControl.getPedal1();
+    int pwmSens0 = car.getVirtualPedal0();
+    int pwmSens1 = car.getVirtualPedal1();
 
     if (pwmSens0 == pwmSens0Last && pwmSens1 == pwmSens1Last) {
         return;
@@ -29,7 +29,7 @@ void writeSensors() {
 }
 
 void handleButtons() {
-    // Only check buttons once every 3 loop cycles
+    // Only check buttons once every X loop cycles
     static uint8_t counter = 0;
     if (++counter < BUTTON_READS_ONCE_EVERY_LOOPS) {
         return;
@@ -119,7 +119,7 @@ void setup() {
     pinMode(ANALOG_BUTTON_INPUT1, INPUT);
 
     fastPwm.init();
-    car.connect();
+    car.setup();
     cruiseControl.setup();
 
 #if DEBUG_MODE
