@@ -31,10 +31,7 @@ private:
 
     void readPedal();
     void applyPID();
-    void setControlValue(double value) {
-        _controlValue = max(0.0, min(1.0, value));
-        car.setVirtualPedal(_controlValue);
-    }
+    void setControlValue(double value);
 };
 
 extern CruiseControl cruiseControl;

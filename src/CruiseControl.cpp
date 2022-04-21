@@ -200,6 +200,9 @@ void CruiseControl::applyPID() {
     previousError = error;
     previousIntegral = integral;
 
+    // Add pedal interaction
+    output += car.readPedalPosition();
+
     // Apply PID
     setControlValue(output);
 
@@ -218,6 +221,11 @@ void CruiseControl::applyPID() {
     Serial.print(",");
     Serial.println(_controlValue * 100);
 #endif
+}
+
+void CruiseControl::setControlValue(double value) {
+    _controlValue = max(0.0, min(1.0, value));
+    car.setVirtualPedal(_controlValue);
 }
 
 void CruiseControl::setup() {

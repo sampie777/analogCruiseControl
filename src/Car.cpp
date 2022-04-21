@@ -215,30 +215,30 @@ double Car::readPedalPosition() {
 
     if (_pedal0min > _pedal1min) {
         int difference = PEDAL_MAX_VALUE - _pedal0min;
-        _pedalRelativePosition = (_virtualPedal0 - _pedal0min) / (double) difference;
+        _hardwarePedalRelativePosition = (_virtualPedal0 - _pedal0min) / (double) difference;
     } else {
         int difference = PEDAL_MAX_VALUE - _pedal1min;
-        _pedalRelativePosition = (_virtualPedal1 - _pedal1min) / (double) difference;
+        _hardwarePedalRelativePosition = (_virtualPedal1 - _pedal1min) / (double) difference;
     }
 
     if (_virtualPedal0 < PEDAL_MIN_VALUE || _virtualPedal1 < PEDAL_MIN_VALUE) {
         return -1;
     }
-    return _pedalRelativePosition;
+    return _hardwarePedalRelativePosition;
 }
 
 void Car::setVirtualPedal(double value) {
-    _pedalRelativePosition = max(0.0, min(1.0, value));
+    double position = max(0.0, min(1.0, value));
 
     if (_pedal0min > _pedal1min) {
         int difference = PEDAL_MAX_VALUE - _pedal0min;
         double factor = (double) _pedal1min / _pedal0min;
-        _virtualPedal0 = (int) (_pedal0min + difference * _pedalRelativePosition);
+        _virtualPedal0 = (int) (_pedal0min + difference * position);
         _virtualPedal1 = (int) (factor * _virtualPedal0);
     } else {
         int difference = PEDAL_MAX_VALUE - _pedal1min;
         double factor = (double) _pedal0min / _pedal1min;
-        _virtualPedal1 = (int) (_pedal1min + difference * _pedalRelativePosition);
+        _virtualPedal1 = (int) (_pedal1min + difference * position);
         _virtualPedal0 = (int) (factor * _virtualPedal1);
     }
 }
