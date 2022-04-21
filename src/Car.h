@@ -29,8 +29,8 @@ public:
     double readPedalPosition();
     void setVirtualPedal(double value);   // Any value between 0.0 and 1.0
     double getVirtualPedalPosition() const { return _pedalRelativePosition; }
-    int getVirtualPedal0() const { return _pedal0; }
-    int getVirtualPedal1() const { return _pedal1; }
+    int getVirtualPedal0() const { return _virtualPedal0; }
+    int getVirtualPedal1() const { return _virtualPedal1; }
 
 private:
     MCP_CAN CAN0;
@@ -42,10 +42,10 @@ private:
     uint16_t _rpm = 0;
     bool _isBraking = false;
 
-    int _pedal0 = 0;
-    int _pedal1 = 0;
     int _pedal0min = 0;
     int _pedal1min = 0;
+    int _virtualPedal0 = 0;
+    int _virtualPedal1 = 0;
     double _pedalRelativePosition = 0.0;
 
     void checkConnection();
