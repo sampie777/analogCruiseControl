@@ -9,9 +9,7 @@ void Car::setup() {
     car.connect();
 
 #if DEBUG_MODE
-    Serial.print("INIT ");
-    Serial.print(_controlValue);
-    Serial.print(" sens0: ");
+    Serial.print("INIT sens0: ");
     Serial.print(_pedal0min);
     Serial.print(" sens1: ");
     Serial.println(_pedal1min);
