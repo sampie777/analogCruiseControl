@@ -45,7 +45,7 @@ private:
     int _pedal1min = 0;
     int _virtualPedal0 = 0;
     int _virtualPedal1 = 0;
-    double _hardwarePedalRelativePosition = 0.0;
+    double _hardwarePedalRelativePosition = 0.0;    // Value between 0 and 1 with 1 being the pedal fully depressed and 0 fully released
 
     void checkConnection();
     static bool messageAvailable();

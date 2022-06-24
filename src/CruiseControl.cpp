@@ -200,11 +200,15 @@ void CruiseControl::applyPID() {
     previousError = error;
     previousIntegral = integral;
 
-    // Add pedal interaction
-    output += car.readPedalPosition();
-
-    // Apply PID
-    setControlValue(output);
+    double pedalPosition = car.readPedalPosition();
+    if (pedalPosition > 0.01) {
+        // Pedal override interaction
+        double overrideControlValue = max(0.0, min(1.0, _controlValue + pedalPosition));
+        car.setVirtualPedal(overrideControlValue);
+    } else {
+        // Apply PID
+        setControlValue(output);
+    }
 
 #if DEBUG_MODE
     static uint8_t counter = 0;
